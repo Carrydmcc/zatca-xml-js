@@ -272,15 +272,14 @@ export class EGS {
     /**
      * Signs a given invoice using the EGS certificate and keypairs.
      * @param invoice Invoice to sign
-     * @param production Boolean production or compliance certificate.
      * @returns Promise void on success (signed_invoice_string: string, invoice_hash: string, qr: string), throws error on fail.
      */
-    signInvoice(invoice: ZATCASimplifiedTaxInvoice | ZATCAStandardTaxInvoice, production?: boolean): {
+    signInvoice(invoice: ZATCASimplifiedTaxInvoice | ZATCAStandardTaxInvoice): {
         signed_invoice_string: string,
         invoice_hash: string,
         qr: string
     } {
-        const certificate = production ? this.egs_info.production_certificate : this.egs_info.compliance_certificate;
+        const certificate = this.egs_options.env === ENV.PRODUCTION ? this.egs_info.production_certificate : this.egs_info.compliance_certificate;
         if (!certificate || !this.egs_info.private_key) throw new Error("EGS is missing a certificate/private key to sign the invoice.");
 
         return invoice.sign(certificate, this.egs_info.private_key);
