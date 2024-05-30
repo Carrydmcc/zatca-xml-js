@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "test": "tsc && node testing_lib/tests/test.js",
-    "example": "tsc --project tsconfig.build.json && node lib/examples/full.js",
+    "example": "ts-node src/examples/full.ts",
     "prepare": "npm run build",
     "preinstall": "yarn run build"
   },
@@ -18,6 +18,7 @@
     "@types/node": "^18.7.16",
     "@types/uuid": "^8.3.4",
     "@types/xmldom": "^0.1.31",
+    "ts-node": "^10.9.2",
     "typescript": "^4.8.3"
   },
   "dependencies": {

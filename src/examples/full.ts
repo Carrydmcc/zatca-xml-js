@@ -1,6 +1,6 @@
-import { EGS, EGSUnitInfo } from "../zatca/egs";
-import { ZATCASimplifiedInvoiceLineItem } from "../zatca/templates/simplified_tax_invoice_template";
-import { ZATCASimplifiedTaxInvoice } from "../zatca/ZATCASimplifiedTaxInvoice";
+import {EGS, EGSUnitInfo, ENV} from "../zatca/egs";
+import {ZATCASimplifiedInvoiceLineItem} from "../zatca/templates/simplified_tax_invoice_template";
+import {ZATCASimplifiedTaxInvoice} from "../zatca/ZATCASimplifiedTaxInvoice";
 
 // Sample line item
 const line_item: ZATCASimplifiedInvoiceLineItem = {
@@ -12,11 +12,11 @@ const line_item: ZATCASimplifiedInvoiceLineItem = {
     VAT_percent: 0.15,
     other_taxes: [
         // 0.5 or 0.5 only
-        { percent_amount: 0.15 }
+        {percent_amount: 0.15}
     ],
     discounts: [
-        { amount: 2, reason: "A discount" },
-        { amount: 2, reason: "A second discount" }
+        {amount: 2, reason: "A discount"},
+        {amount: 2, reason: "A second discount"}
     ],
     VAT_exemption_reason: ""
 };
@@ -39,7 +39,7 @@ const egsunit: EGSUnitInfo = {
         postal_zone: "31952"
     },
     branch_name: "My Branch Name",
-    branch_industry: "Food"
+    branch_industry: "Food",
 };
 
 // Sample Invoice
@@ -64,16 +64,17 @@ const main = async () => {
     try {
 
         // Init a new EGS
-        const egs = new EGS(egsunit);
-
-        // New Keys & CSR for the EGS
-        await egs.generateNewKeysAndCSR(false, "solution_name");
+        const egs = await EGS.init(egsunit, {
+            env: ENV.SANDBOX,
+            tmp_files_folder: '/tmp',
+            solution_name: "solution_name",
+        })
 
         // Issue a new compliance cert for the EGS
         const compliance_request_id = await egs.issueComplianceCertificate("123345");
 
         // Sign invoice
-        const { signed_invoice_string, invoice_hash, qr } = egs.signInvoice(invoice);
+        const {signed_invoice_string, invoice_hash, qr} = egs.signInvoice(invoice);
 
         // Check invoice compliance
         console.log(await egs.checkInvoiceCompliance(signed_invoice_string, invoice_hash));
@@ -84,8 +85,6 @@ const main = async () => {
         // Report invoice production
         // Note: This request currently fails because ZATCA sandbox returns a constant fake production certificate
         console.log(await egs.reportInvoice(signed_invoice_string, invoice_hash));
-
-
     } catch (error: any) {
         console.log(error.message ?? error);
     }
