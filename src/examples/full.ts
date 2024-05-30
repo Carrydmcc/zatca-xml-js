@@ -1,7 +1,6 @@
 import { EGS, EGSUnitInfo } from "../zatca/egs";
 import { ZATCASimplifiedInvoiceLineItem } from "../zatca/templates/simplified_tax_invoice_template";
 import { ZATCASimplifiedTaxInvoice } from "../zatca/ZATCASimplifiedTaxInvoice";
-import { generatePhaseOneQR } from "../zatca/qr";
 
 // Sample line item
 const line_item: ZATCASimplifiedInvoiceLineItem = {
@@ -9,9 +8,11 @@ const line_item: ZATCASimplifiedInvoiceLineItem = {
     name: "TEST NAME",
     quantity: 5,
     tax_exclusive_price: 10,
+    // 0.5 or 0.5 only
     VAT_percent: 0.15,
     other_taxes: [
-        { percent_amount: 1 }
+        // 0.5 or 0.5 only
+        { percent_amount: 0.15 }
     ],
     discounts: [
         { amount: 2, reason: "A discount" },
@@ -61,10 +62,6 @@ const invoice = new ZATCASimplifiedTaxInvoice({
 
 const main = async () => {
     try {
-
-        // TEMP_FOLDER: Use .env or set directly here (Default: /tmp/)
-        // Enable for windows
-        // process.env.TEMP_FOLDER = `${require("os").tmpdir()}\\`;
 
         // Init a new EGS
         const egs = new EGS(egsunit);
