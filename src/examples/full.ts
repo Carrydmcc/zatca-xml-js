@@ -6,7 +6,7 @@ import {
 } from "../zatca/templates/simplified_tax_invoice_template";
 import {ZATCAStandardTaxInvoice} from "../zatca/ZATCAStandardTaxInvoice";
 import {ZATCASimplifiedTaxInvoice} from "../zatca/ZATCASimplifiedTaxInvoice";
-import {ENV} from "../zatca/api";
+import {ENV} from "../";
 
 // Sample line item
 const line_item: ZATCASimplifiedInvoiceLineItem = {
