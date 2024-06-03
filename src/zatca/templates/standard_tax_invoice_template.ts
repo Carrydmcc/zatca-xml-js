@@ -1,21 +1,15 @@
-import { EGSUnitInfo } from "../egs";
 import defaultBillingReference from "./invoice_billing_reference_template";
 import standardInvoiceCustomer from "./invoice_customer_party_template";
 import {
-  ZATCAInvoiceTypes,
-  ZATCAPaymentMethods,
-  ZATCASimplifiedInvoiceProps,
-  ZATCASimplifiedInvoicCancelation,
-  ZATCASimplifiedInvoiceLineItem,
-  ZATCASimplifiedInvoiceLineItemDiscount,
-  ZATCASimplifiedInvoiceLineItemTax
+    ZATCAInvoiceTypes,
+    ZATCASimplifiedInvoiceProps,
 } from "./simplified_tax_invoice_template";
 
 
 /**
  * Maybe use a templating engine instead of str replace.
- * This works for now though 
- * 
+ * This works for now though
+ *
  * cbc:InvoiceTypeCode: 388: BR-KSA-05 Tax Invoice according to UN/CEFACT codelist 1001, D.16B for KSA.
  *  name="0211010": BR-KSA-06 starts with "02" Simplified Tax Invoice. Also explains other positions.
  * cac:AdditionalDocumentReference: ICV: KSA-16, BR-KSA-33 (Invoice Counter number)
@@ -85,55 +79,55 @@ const template = /* XML */`
 `;
 
 export interface ZATCAStandardInvoiceCustomer {
-  registered_name: string,
-  street: string,
-  additional_street_name: string,
-  building_number: string,
-  plot_Identification: string,
-  city_subdivision_name: string,
-  city: string,
-  postcode: string,
-  country_subentity: string,
-  country: string,
-  vat_id?: string,
-  crn?: string
+    registered_name: string,
+    street: string,
+    additional_street_name: string,
+    building_number: string,
+    plot_Identification: string,
+    city_subdivision_name: string,
+    city: string,
+    postcode: string,
+    country_subentity: string,
+    country: string,
+    vat_id?: string,
+    crn?: string
 }
 
 export interface ZATCAStandardInvoiceProps extends ZATCASimplifiedInvoiceProps {
-  customer: ZATCAStandardInvoiceCustomer
+    customer: ZATCAStandardInvoiceCustomer
 }
 
 export default function populate(props: ZATCAStandardInvoiceProps): string {
-  let populated_template = template;
+    let populated_template = template;
 
-  populated_template = populated_template.replace("SET_INVOICE_TYPE", props.cancelation ? props.cancelation.cancelation_type : ZATCAInvoiceTypes.INVOICE);
-  // if canceled (BR-KSA-56) set reference number to canceled invoice
-  if (props.cancelation) {
-    populated_template = populated_template.replace("SET_BILLING_REFERENCE", defaultBillingReference(props.cancelation.canceled_invoice_number));
-  } else {
-    populated_template = populated_template.replace("SET_BILLING_REFERENCE", "");
-  }
+    populated_template = populated_template.replace("SET_INVOICE_TYPE", props.cancelation ? props.cancelation.cancelation_type : ZATCAInvoiceTypes.INVOICE);
+    // if canceled (BR-KSA-56) set reference number to canceled invoice
+    if (props.cancelation) {
+        populated_template = populated_template.replace("SET_BILLING_REFERENCE", defaultBillingReference(props.cancelation.canceled_invoice_number));
+    } else {
+        populated_template = populated_template.replace("SET_BILLING_REFERENCE", "");
+    }
 
 
-  populated_template = populated_template.replace("SET_INVOICE_SERIAL_NUMBER", props.invoice_serial_number);
-  populated_template = populated_template.replace("SET_TERMINAL_UUID", props.egs_info.current_invoice_uuid  as string);  // as per BR-KSA-03
-  populated_template = populated_template.replace("SET_ISSUE_DATE", props.issue_date);
-  populated_template = populated_template.replace("SET_ISSUE_TIME", props.issue_time + 'Z');
-  populated_template = populated_template.replace("SET_PREVIOUS_INVOICE_HASH", props.previous_invoice_hash);
-  populated_template = populated_template.replace("SET_INVOICE_COUNTER_NUMBER", props.invoice_counter_number.toString());
-  populated_template = populated_template.replace("SET_COMMERCIAL_REGISTRATION_NUMBER", props.egs_info.CRN_number);
+    populated_template = populated_template.replace("SET_INVOICE_SERIAL_NUMBER", props.invoice_serial_number);
+    populated_template = populated_template.replace("SET_TERMINAL_UUID", props.egs_info.current_invoice_uuid as string);  // as per BR-KSA-03
+    populated_template = populated_template.replace("SET_ISSUE_DATE", props.issue_date);
+    populated_template = populated_template.replace("SET_ISSUE_TIME", props.issue_time + 'Z');
+    populated_template = populated_template.replace("SET_PREVIOUS_INVOICE_HASH", props.previous_invoice_hash);
+    populated_template = populated_template.replace("SET_INVOICE_COUNTER_NUMBER", props.invoice_counter_number.toString());
+    populated_template = populated_template.replace("SET_COMMERCIAL_REGISTRATION_NUMBER", props.egs_info.CRN_number);
 
-  populated_template = populated_template.replace("SET_STREET_NAME", props.egs_info.location.street);
-  populated_template = populated_template.replace("SET_BUILDING_NUMBER", props.egs_info.location.building);
-  populated_template = populated_template.replace("SET_PLOT_IDENTIFICATION", props.egs_info.location.plot_identification);
-  populated_template = populated_template.replace("SET_CITY_SUBDIVISION", props.egs_info.location.city_subdivision);
-  populated_template = populated_template.replace("SET_CITY", props.egs_info.location.city);
-  populated_template = populated_template.replace("SET_POSTAL_NUMBER", props.egs_info.location.postal_zone);
+    populated_template = populated_template.replace("SET_STREET_NAME", props.egs_info.location.street);
+    populated_template = populated_template.replace("SET_BUILDING_NUMBER", props.egs_info.location.building);
+    populated_template = populated_template.replace("SET_PLOT_IDENTIFICATION", props.egs_info.location.plot_identification);
+    populated_template = populated_template.replace("SET_CITY_SUBDIVISION", props.egs_info.location.city_subdivision);
+    populated_template = populated_template.replace("SET_CITY", props.egs_info.location.city);
+    populated_template = populated_template.replace("SET_POSTAL_NUMBER", props.egs_info.location.postal_zone);
 
-  populated_template = populated_template.replace("SET_VAT_NUMBER", props.egs_info.VAT_number);
-  populated_template = populated_template.replace("SET_VAT_NAME", props.egs_info.VAT_name);
+    populated_template = populated_template.replace("SET_VAT_NUMBER", props.egs_info.VAT_number);
+    populated_template = populated_template.replace("SET_VAT_NAME", props.egs_info.VAT_name);
 
-  /** Standard Invoice Props */
-  populated_template = populated_template.replace("SET_ACCOUNTING_CUSTOMER_PARTY", standardInvoiceCustomer(props.customer, props.issue_date));
-  return populated_template;
+    /** Standard Invoice Props */
+    populated_template = populated_template.replace("SET_ACCOUNTING_CUSTOMER_PARTY", standardInvoiceCustomer(props.customer, props.issue_date));
+    return populated_template;
 };

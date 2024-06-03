@@ -29,7 +29,7 @@ interface ComplianceAPIInterface {
      * @param egs_uuid String.
      * @returns Any status.
      */
-    checkInvoiceCompliance: (signed_xml_string: string, invoice_hash: string, egs_uuid: string) => Promise<any>
+    checkInvoiceCompliance: (signed_xml_string: string, invoice_hash: string, invoice_uuid: string) => Promise<any>
 }
 
 
@@ -65,17 +65,23 @@ interface ProductionAPIInterface {
 
 }
 
+export enum ENV {
+    SANDBOX,
+    PRODUCTION,
+    SIMULATION
+}
+
 
 class API {
 
     baseUrl = settings.SANDBOX_BASEURL;
 
-    constructor(env: number) {
+    constructor(env: ENV) {
         switch (env) {
-            case 1:
+            case ENV.PRODUCTION:
                 this.baseUrl = settings.PRODUCTION_BASEURL;
                 break;
-            case 2:
+            case ENV.SIMULATION:
                 this.baseUrl = settings.SIMULATION_BASEURL;
                 break;
 
