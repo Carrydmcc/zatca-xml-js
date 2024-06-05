@@ -104,7 +104,6 @@ dist
 .tern-port
 
 
-/lib
 /testing_lib
 /src/tests
 .DS_STORE

@@ -9,9 +9,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "test": "tsc && node testing_lib/tests/test.js",
-    "example": "ts-node src/examples/full.ts",
-    "prepare": "npm run build",
-    "preinstall": "yarn run build"
+    "example": "ts-node src/examples/full.ts"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.184",
